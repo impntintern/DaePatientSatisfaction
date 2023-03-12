@@ -1,0 +1,44 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Patients Satisfaction Prediction Model</title>
+</head>
+<style>
+.prediction {
+  margin: auto;
+}
+h1 {
+background-color:#133f68;
+text-align: center;
+color:white;
+font-family:Calibri;
+}
+form, label, input {
+text-align: center;
+font-family:Calibri;
+font-weight:bold;
+}
+button {
+color:Black;
+text-align:center;
+font-family:Calibri;
+font-weight:bold;
+font-size:14px;
+}
+</style>
+<body bgcolor=#f7cac9 >
+    <div class="prediction">
+        <h1>DAE Patients Satisfaction</h1>
+        <form action="{{ url_for('predict')}}"method="post"><br>
+		    <label for="date">Date :&nbsp;&nbsp;&nbsp;</label>
+		    <input type="date" name="date" id="date" required='required'>&nbsp;&nbsp;&nbsp;&nbsp;
+            <button type="submit" class="btn btn-primary btn-block btn-large">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Predict&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</button>
+		    <div id="displayDate"></div><br><br>
+            <p>{{ statement }}</p>
+        </form><br>
+    </div>
+</body>
+
+</html>
