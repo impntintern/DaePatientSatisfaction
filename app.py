@@ -2,7 +2,6 @@ import numpy as np
 import pandas as pd
 import pymssql
 from flask import Flask, request, render_template
-from sklearn.preprocessing import MinMaxScaler 
 from feature_engineering import *
 import pickle
 import warnings
@@ -10,6 +9,7 @@ import warnings
 warnings.filterwarnings('ignore')
 
 model = pickle.load(open('DAE_PatientsSatisfaction.pkl', 'rb'))
+scaler = pickle.load(open('DAE_MinMaxScaler.pkl', 'rb'))
 
 app = Flask(__name__, template_folder='templates')
 
@@ -20,7 +20,7 @@ def home():
 @app.route('/predict', methods=['GET','POST'] )
 
 def predict():
-    conn = pymssql.connect(server='103.13.96.124', user='ReadonlyAll', password='abcd0123!', database='PXPFassco')
+    conn = pymssql.connect(server='103.13.96.124', user='ReadonlyAll', password='abcd0123!!', database='PXPFassco')
     cursor = conn.cursor(as_dict=True)
     form_date = pd.to_datetime(request.form.get('date')).strftime('%Y-%m-%d')
     cursor.callproc('dbo.sp_rd_ML_DAE_EVS_Cleaningness', (form_date,))
@@ -44,10 +44,9 @@ def predict():
     df1['CorridorsAndHallwayInspection'] = df1[['CorridorsAndHallwayInspection','EntranceInspection']].apply(impute_CorridorsAndHallwayInspection,axis=1)
     df1['EntranceInspection'] = df1[['EntranceInspection','LiftBankInspection']].apply(impute_EntranceInspection,axis=1)
     df1 = df1[['PatientRoomInspection','OfficeInspection','WaitingAreaInspection','LiftBankInspection','StaircaseInspection','MedicalWasteRoomInspection','PublicAreaRestRoomInspection','HousekeepingClosetInspection','SoiledUtilityInspection','HousekeepingCartInspection','CorridorsAndHallwayInspection','EntranceInspection']].copy()
-    print(df1.values)
-    scaler = MinMaxScaler()
+
     x = df1.values
-    x_scaled = scaler.fit_transform(x)
+    x_scaled = scaler.transform(x)
     x = pd.DataFrame(x_scaled)
     feature_list = x.values[0].tolist()
     final_features = np.array(feature_list).reshape(1, 12)
